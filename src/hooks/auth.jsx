@@ -30,7 +30,7 @@ function AuthProvider({ children }) {
 
     return(
     <AuthContext.Provider value={{ signIn, user: data.user }}>
-        {/* children is <Routes> that are inside AuthProvider in main.js */}
+        {/* children is <Routes> that is inside AuthProvider in main.js */}
         { children }
     </AuthContext.Provider>
     )
