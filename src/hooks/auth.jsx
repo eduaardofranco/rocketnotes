@@ -33,6 +33,16 @@ function AuthProvider({ children }) {
 
     }
 
+    function signOut() {
+        //remove user and token from localstorage
+        const token = localStorage.removeItem("@rocketnotes:token")
+        const user = localStorage.removeItem("@rocketnotes:user")
+        
+        //set data state as empty again
+        setData({})
+    }
+
+
     useEffect(() => {
         //when page reloads, get user and token from localstorage
         //and set it again to the api header
@@ -51,7 +61,11 @@ function AuthProvider({ children }) {
     }, [])
 
     return(
-    <AuthContext.Provider value={{ signIn, user: data.user }}>
+    <AuthContext.Provider value={{
+        signIn,
+        signOut,
+        user: data.user
+        }}>
         {/* children is <Routes> that is inside AuthProvider in main.js */}
         { children }
     </AuthContext.Provider>
