@@ -1,5 +1,6 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 import { api } from '../services/api'
+import { json } from "react-router-dom"
 
 export const AuthContext = createContext({})
 
@@ -12,6 +13,10 @@ function AuthProvider({ children }) {
             //create sesseion when login
             const response = await api.post("/sessions", { email, password })
             const { user, token } = response.data
+
+            //set user and token to the localstorage
+            localStorage.setItem("@rocketnotes:user", JSON.stringify(user))
+            localStorage.setItem("@rocketnotes:token", token)
 
             //insert token type bearer of authorization in the header off all requests
             api.defaults.headers.authorization = `Bearer ${token}`
@@ -27,6 +32,23 @@ function AuthProvider({ children }) {
 
 
     }
+
+    useEffect(() => {
+        //when page reloads, get user and token from localstorage
+        //and set it again to the api header
+        const token = localStorage.getItem("@rocketnotes:token")
+        const user = localStorage.getItem("@rocketnotes:user")
+
+        if(token && user) {
+            api.defaults.headers.authorization = `Bearer ${token}`
+
+            setData({
+                token,
+                user: JSON.parse(user)
+            })
+
+        }
+    }, [])
 
     return(
     <AuthContext.Provider value={{ signIn, user: data.user }}>
