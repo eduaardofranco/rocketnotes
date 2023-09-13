@@ -43,6 +43,26 @@ function AuthProvider({ children }) {
         setData({})
     }
 
+    async function updateProfile({ user }) {
+        try {
+            //register the user in the database
+            await api.put("/users", user)
+            //set user in the localstorage
+            localStorage.setItem("@rocketnotes:user", JSON.stringify(user))
+
+            //set the user new infos to the data, and keep user token from data
+            setData({ user, token: data.token})
+            alert('Profile updated')
+
+        } catch(error) {
+            if(error.response) {
+                alert(error.response.data.message)
+            } else {
+                alert('Fail to update profile')
+            }
+        }
+    }
+
 
     useEffect(() => {
         //when page reloads, get user and token from localstorage
@@ -65,6 +85,7 @@ function AuthProvider({ children }) {
     <AuthContext.Provider value={{
         signIn,
         signOut,
+        updateProfile,
         user: data.user
         }}>
         {/* children is <Routes> that is inside AuthProvider in main.js */}
