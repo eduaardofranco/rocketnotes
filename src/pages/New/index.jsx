@@ -6,8 +6,29 @@ import { NoteItem } from '../../components/NoteItem'
 import { Section } from '../../components/Section'
 import { Button } from '../../components/Button'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
 export function New() {
+
+    const [links, setLinks] = useState([])
+    const [newLink, setNewLink] = useState("")
+
+    function handleAddLink() {
+        //add new link only if link is not empty
+        if(newLink) {
+            setLinks(prevState => [...prevState, newLink])
+            //reset state
+            setNewLink("")
+
+        }
+    }
+
+    function handleRemoveLink(deleted) {
+        //will remove the link I want from array links by its index
+        setLinks(prevState => prevState.filter((link, index) => index !== deleted))
+    }
+
+
     return(
         <Container>
             <Header />
@@ -25,8 +46,24 @@ export function New() {
                     <Textarea placeholder="Description" />
 
                     <Section title="Links">
-                        <NoteItem  value="https://github.com/eduaardofranco" />
-                        <NoteItem  isnew placeholder="New Link" />
+                        
+                        {
+                            links.map((link, index) => (
+                                <NoteItem
+                                    key={String(index)}
+                                    value={link}
+                                    onClick={() => handleRemoveLink(index)}
+                                />
+                            ))
+                        }
+
+                        <NoteItem
+                            isnew
+                            placeholder="New Link"
+                            value={newLink}
+                            onChange={e => setNewLink(e.target.value)}
+                            onClick={handleAddLink}
+                        />
 
                     </Section>
                     <Section title="Tags">
