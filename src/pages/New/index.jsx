@@ -13,6 +13,9 @@ export function New() {
     const [links, setLinks] = useState([])
     const [newLink, setNewLink] = useState("")
 
+    const [tags, setTags] = useState([])
+    const [newTag, setNewTag] = useState("")
+
     function handleAddLink() {
         //add new link only if link is not empty
         if(newLink) {
@@ -26,6 +29,21 @@ export function New() {
     function handleRemoveLink(deleted) {
         //will remove the link I want from array links by its index
         setLinks(prevState => prevState.filter((link, index) => index !== deleted))
+    }
+
+    function handleAddTag() {
+        //add new link only if link is not empty
+        if(newTag) {
+            setTags(prevState => [...prevState, newTag])
+            //reset state
+            setNewTag("")
+
+        }
+    }
+
+    function handleRemoveTag(deleted) {
+        //will remove the link I want from array links by its index
+        setTags(prevState => prevState.filter((link, index) => index !== deleted))
     }
 
 
@@ -68,8 +86,22 @@ export function New() {
                     </Section>
                     <Section title="Tags">
                         <div className='tags'>
-                            <NoteItem  value="ReactJs" />
-                            <NoteItem  isnew placeholder="New Tag" />
+                            {
+                                tags.map((tag, index) => (
+                                    <NoteItem
+                                        key={String(index)}
+                                        value={tag}
+                                        onClick={() => handleRemoveTag(index)}
+                                    />
+                                ))
+                            }
+                            <NoteItem
+                                isnew
+                                placeholder="New Tag"
+                                value={newTag}
+                                onChange={e => setNewTag(e.target.value)}
+                                onClick={handleAddTag}
+                            />
                         </div>
                     </Section>
                     <Button title="Save" />
