@@ -7,14 +7,20 @@ import { Section } from '../../components/Section'
 import { Button } from '../../components/Button'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { api } from '../../services/api'
+import { useNavigate } from 'react-router-dom'
 
 export function New() {
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
 
     const [links, setLinks] = useState([])
     const [newLink, setNewLink] = useState("")
 
     const [tags, setTags] = useState([])
     const [newTag, setNewTag] = useState("")
+
+    const navigate = useNavigate()
 
     function handleAddLink() {
         //add new link only if link is not empty
@@ -46,6 +52,33 @@ export function New() {
         setTags(prevState => prevState.filter((link, index) => index !== deleted))
     }
 
+    async function handleNewNote() {
+
+        //title mandatory
+        if(!title) {
+            return alert("Title not informed")
+        }
+
+        //if there is link not add in the field
+        if(newLink) {
+            return alert('You have a link to add')
+        }
+
+        //if there is tag not add in the field
+        if(newTag) {
+            return alert('You have a tag to add')
+        }
+        
+        await api.post("/notes", {
+            title,
+            description,
+            tags,
+            links
+        })
+        alert("Note created Sucessfully")
+        //navigate to home
+        navigate("/")
+    }
 
     return(
         <Container>
@@ -60,8 +93,14 @@ export function New() {
                         </Link>
                     </header>
 
-                    <Input placeholder="Title" />
-                    <Textarea placeholder="Description" />
+                    <Input
+                        placeholder="Title"
+                        onChange={e=> setTitle(e.target.value)}    
+                    />
+                    <Textarea
+                        placeholder="Description"
+                        onChange={e=> setDescription(e.target.value)} 
+                    />
 
                     <Section title="Links">
                         
@@ -104,7 +143,10 @@ export function New() {
                             />
                         </div>
                     </Section>
-                    <Button title="Save" />
+                    <Button
+                        title="Save"
+                        onClick={handleNewNote}
+                    />
                 </Form>
             </main>
         </Container>
