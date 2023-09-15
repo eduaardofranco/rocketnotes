@@ -12,8 +12,13 @@ import { FiPlus, FiSearch } from 'react-icons/fi'
 export function Home() {
     const [tags, setTags] = useState([])
     const [tagsSelected, setTagsSelected] = useState([])
+    const [ search, setSearch] = useState("")
 
     function handleTagSelected(tagName) {
+        //if all clicked
+        if(tagName === "all") {
+            return setTagsSelected("")
+        }
         const alreadySelected = tagsSelected.includes(tagName)
         
         if(alreadySelected) {
@@ -24,11 +29,6 @@ export function Home() {
             setTagsSelected(prevState => [...prevState, tagName])
         }
 
-    }
-
-    function handleClearAll() {
-        //if user clicks "all", it clears the array and select all
-        setTagsSelected("")
     }
 
 
@@ -56,7 +56,7 @@ export function Home() {
                 <li>
                     <ButtonText
                         title="All"
-                        onClick={handleClearAll}
+                        onClick={() => handleTagSelected("all")}
                         //if array tagSelected is empty, means no tag is active so active "All"
                         isActive={tagsSelected.length === 0}
                     />
@@ -77,7 +77,11 @@ export function Home() {
             </Menu>
             
             <Search>
-                <Input placeholder="Search by title" icon={FiSearch} />
+                <Input
+                    placeholder="Search by title"
+                    icon={FiSearch}
+                    onChange={() => setSearch(e.target.value)}
+                />
             </Search>
             
             <Content>
