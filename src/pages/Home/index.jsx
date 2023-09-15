@@ -12,7 +12,8 @@ import { FiPlus, FiSearch } from 'react-icons/fi'
 export function Home() {
     const [tags, setTags] = useState([])
     const [tagsSelected, setTagsSelected] = useState([])
-    const [ search, setSearch] = useState("")
+    const [search, setSearch] = useState("")
+    const [notes, setNotes] = useState([])
 
     function handleTagSelected(tagName) {
         //if all clicked
@@ -39,9 +40,17 @@ export function Home() {
             //save tags inside setTags
             setTags(response.data)
         }
-
+        
         fetchTags()
     },[])
+
+    useEffect(() =>{
+        async function fetchNotes() {
+            const response = await api.get(`/notes?title=${search}&tags=${tagsSelected}`)
+            setNotes(response.data)
+        }
+        fetchNotes()
+    },[tagsSelected, search])
 
 
     return(
@@ -80,19 +89,21 @@ export function Home() {
                 <Input
                     placeholder="Search by title"
                     icon={FiSearch}
-                    onChange={() => setSearch(e.target.value)}
+                    onChange={(e) => setSearch(e.target.value)}
                 />
             </Search>
             
             <Content>
                 <Section title="My notes">
-                    <Note data={{
-                        title: 'react',
-                        tags: [
-                            {id: 1, name: "React"},
-                            {id: 2, name: "NodeJs"}
-                        ]
-                        }}/>
+                    {
+                        notes.map(note => (
+                            <Note
+                                key={String(note.id)}
+                                data={note}
+                            />
+                        ))
+
+                    }
                         
                 </Section>
             </Content>
