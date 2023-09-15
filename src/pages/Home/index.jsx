@@ -3,11 +3,47 @@ import { Header } from '../../components/Header'
 import { ButtonText } from '../../components/ButtonText'
 import { Section } from '../../components/Section'
 import { Note } from '../../components/Note'
+import { useState, useEffect } from 'react'
+import { api } from '../../services/api'
 
 import { Input } from '../../components/Input'
 import { FiPlus, FiSearch } from 'react-icons/fi'
 
 export function Home() {
+    const [tags, setTags] = useState([])
+    const [tagsSelected, setTagsSelected] = useState([])
+
+    function handleTagSelected(tagName) {
+        const alreadySelected = tagsSelected.includes(tagName)
+        
+        if(alreadySelected) {
+            const filteredTags = tagsSelected.filter(tag => tag !== tagName)
+            setTagsSelected(filteredTags)
+        } else {
+            
+            setTagsSelected(prevState => [...prevState, tagName])
+        }
+
+    }
+
+    function handleClearAll() {
+        //if user clicks "all", it clears the array and select all
+        setTagsSelected("")
+    }
+
+
+    useEffect(() => {
+
+        async function fetchTags() {
+            const response = await api.get("/tags")
+            //save tags inside setTags
+            setTags(response.data)
+        }
+
+        fetchTags()
+    },[])
+
+
     return(
         <Container>
             <Brand>
@@ -17,9 +53,27 @@ export function Home() {
             <Header />
             
             <Menu>
-                <li><ButtonText title="All" /></li>
-                <li><ButtonText title="React" isActive /></li>
-                <li><ButtonText title="Node" /></li>
+                <li>
+                    <ButtonText
+                        title="All"
+                        onClick={handleClearAll}
+                        //if array tagSelected is empty, means no tag is active so active "All"
+                        isActive={tagsSelected.length === 0}
+                    />
+                </li>
+
+                {
+                    tags && tags.map(tag => (
+                        <li key={String(tag.id)}>
+                            <ButtonText
+                              title={tag.name}
+                              onClick={() => handleTagSelected(tag.name)}
+                              isActive={tagsSelected.includes(tag.name)}
+
+                            />
+                        </li>
+                    ))
+                }
             </Menu>
             
             <Search>
