@@ -5,6 +5,7 @@ import { Textarea } from '../../components/Textarea'
 import { NoteItem } from '../../components/NoteItem'
 import { Section } from '../../components/Section'
 import { Button } from '../../components/Button'
+import { ButtonText } from '../../components/ButtonText'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { api } from '../../services/api'
@@ -79,6 +80,9 @@ export function New() {
         //navigate to home
         navigate("/")
     }
+    function handleBack() {
+        navigate(-1)
+      }
 
     return(
         <Container>
@@ -88,9 +92,10 @@ export function New() {
                 <Form>
                     <header>
                         <h1>New Note</h1>
-                        <Link to="/">
-                            Back
-                        </Link>
+                        <ButtonText
+                            title="Back"
+                            onClick={handleBack}
+                        />
                     </header>
 
                     <Input
